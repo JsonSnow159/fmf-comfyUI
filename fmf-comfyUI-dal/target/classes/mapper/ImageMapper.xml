@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fmf.fmf.comfyUI.dal.mapper.ImageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fmf.fmf.comfyUI.dal.entity.Image">
+        <result column="id" property="id"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="uid" property="uid"/>
+    </resultMap>
+
+    <sql id="table">
+        image
+    </sql>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        *
+        from
+        <include refid="table"/>
+        where uid = #{uid} and is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.Image">
+        insert into
+        <include refid="table"/>
+        (uid,image_url)
+        values
+        (#{uid}, #{imageUrl})
+    </insert>
+
+</mapper>

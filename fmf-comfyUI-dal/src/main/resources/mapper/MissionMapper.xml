@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fmf.fmf.comfyUI.dal.mapper.MissionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fmf.fmf.comfyUI.dal.entity.Mission">
+        <result column="id" property="id"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="mission_id" property="missionId"/>
+        <result column="uid" property="uid"/>
+        <result column="prompt_id" property="promptId"/>
+        <result column="prompt_request" property="promptRequest"/>
+        <result column="cloud_machine_ip" property="cloudMachineIp"/>
+        <result column="cloud_machine_port" property="cloudMachinePort"/>
+        <result column="status" property="status"/>
+        <result column="images" property="images"/>
+        <result column="error_data" property="errorData"/>
+    </resultMap>
+
+    <sql id="table">
+        mission
+    </sql>
+
+    <select id="findByUser" resultMap="BaseResultMap">
+        select
+        *
+        from
+        <include refid="table"/>
+        where uid = #{uid} and is_deleted = 0
+    </select>
+
+    <select id="findByMissionId" resultMap="BaseResultMap">
+        select
+        *
+        from
+        <include refid="table"/>
+        where mission_id = #{missionId} and is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.Mission" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        <include refid="table"/>
+        (mission_id,uid,prompt_request,cloud_machine_ip,cloud_machine_port,status)
+        values
+        (#{missionId}, #{uid}, #{promptRequest},#{cloudMachineIp},#{cloudMachinePort},#{status})
+    </insert>
+
+    <update id="update" parameterType="com.fmf.fmf.comfyUI.dal.entity.Mission">
+        update
+        <include refid="table" />
+        set updated_at = now()
+        <if test="promptId != null">
+            , prompt_id = #{promptId}
+        </if>
+        <if test="status != null">
+            , status = #{status}
+        </if>
+        <if test="images != null">
+            , images = #{images}
+        </if>
+        <if test="errorData != null">
+            , error_data = #{errorData}
+        </if>
+        where mission_id = #{missionId}
+    </update>
+
+</mapper>

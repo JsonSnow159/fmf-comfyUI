@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fmf.fmf.comfyUI.dal.mapper.MissionOutputMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fmf.fmf.comfyUI.dal.entity.MissionOutput">
+        <result column="id" property="id"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="mission_id" property="missionId"/>
+        <result column="image_data" property="imageData"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="status" property="status"/>
+        <result column="fail_reason" property="failReason"/>
+    </resultMap>
+
+    <sql id="table">
+        mission_output
+    </sql>
+
+    <select id="findByMissionId" resultMap="BaseResultMap">
+        select
+        *
+        from
+        <include refid="table"/>
+        where mission_id = #{missionId} and is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.MissionOutput">
+        insert into
+        <include refid="table"/>
+        (mission_id,image_data,status)
+        values
+        (#{missionId}, #{imageData}, #{status})
+    </insert>
+
+    <update id="update">
+        update
+        <include refid="table" />
+        set updated_at = now()
+        <if test="imageUrl != null">
+            , image_url = #{imageUrl}
+        </if>
+        <if test="status != null">
+            , status = #{status}
+        </if>
+        <if test="failReason != null">
+            , fail_reason = #{failReason}
+        </if>
+        where mission_id = #{missionId}
+    </update>
+
+</mapper>
