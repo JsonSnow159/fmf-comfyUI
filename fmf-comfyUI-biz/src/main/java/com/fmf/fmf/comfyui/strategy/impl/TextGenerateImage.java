@@ -1,4 +1,4 @@
-package com.fmf.fmf.comfyui.service.impl;
+package com.fmf.fmf.comfyui.strategy.impl;
 
 import cn.hutool.core.lang.UUID;
 import com.alibaba.fastjson.JSON;
@@ -7,17 +7,20 @@ import com.fmf.fmf.comfyUI.dal.entity.ToolTemplate;
 import com.fmf.fmf.comfyUI.dal.mapper.MissionMapper;
 import com.fmf.fmf.comfyUI.dal.mapper.ToolTemplateMapper;
 import com.fmf.fmf.comfyui.common.ICacheService;
-import com.fmf.fmf.comfyui.dto.ToolRequestDTO;
 import com.fmf.fmf.comfyui.dto.QueuePromptResponse;
 import com.fmf.fmf.comfyui.dto.ToolConfigDTO;
+import com.fmf.fmf.comfyui.dto.ToolRequestDTO;
+import com.fmf.fmf.comfyui.enums.ToolEnum;
 import com.fmf.fmf.comfyui.exception.BizException;
 import com.fmf.fmf.comfyui.exception.CloudMachineStatusEnum;
 import com.fmf.fmf.comfyui.exception.ErrorCodeEnum;
-import com.fmf.fmf.comfyui.service.GeneratePhotoService;
+import com.fmf.fmf.comfyui.service.impl.ComfyUIPromptServiceImpl;
+import com.fmf.fmf.comfyui.strategy.ToolStrategy;
 import com.fmf.fmf.comfyui.utils.SeedUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,11 +30,11 @@ import java.util.Set;
 
 /**
  * @Author:吴金才
- * @Date:2024/2/1 15:46
+ * @Date:2024/2/5 16:45
  */
 @Slf4j
-@Service
-public class GeneratePhotoServiceImpl implements GeneratePhotoService {
+@Component
+public class TextGenerateImage implements ToolStrategy {
     @Resource
     private ToolTemplateMapper toolTemplateMapper;
     @Resource
@@ -45,15 +48,20 @@ public class GeneratePhotoServiceImpl implements GeneratePhotoService {
     private MissionMapper missionMapper;
 
     @Override
-    public void generatePhoto(ToolRequestDTO generatePhotoRequest) {
-        String toolType = generatePhotoRequest.getToolCode();
-        String version = generatePhotoRequest.getVersion();
+    public String getToolCode() {
+        return ToolEnum.TEXT_GENERATE_IMAGE.getCode();
+    }
+
+    @Override
+    public void handler(ToolRequestDTO toolRequest) {
+        String toolType = toolRequest.getToolCode();
+        String version = toolRequest.getVersion();
         ToolTemplate toolTemplate = toolTemplateMapper.findByTool(toolType, version);
         if (Objects.isNull(toolTemplate)) {
             log.error("工具未配置模版，暂不可用");
             throw new BizException(ErrorCodeEnum.TOOL_TEMPLATE_ERROR);
         }
-        List<ToolConfigDTO> toolConfigList = generatePhotoRequest.getToolConfigList();
+        List<ToolConfigDTO> toolConfigList = toolRequest.getToolConfigList();
         String templateContent = toolTemplate.getTemplateContent();
 
         String missionId = UUID.randomUUID().toString();
@@ -111,8 +119,8 @@ public class GeneratePhotoServiceImpl implements GeneratePhotoService {
         }
         Mission mission = new Mission();
         mission.setMissionId(missionId);
-        mission.setUid(generatePhotoRequest.getUid());
-        mission.setPromptRequest(JSON.toJSONString(generatePhotoRequest.getToolConfigList()));
+        mission.setUid(toolRequest.getUid());
+        mission.setPromptRequest(JSON.toJSONString(toolRequest.getToolConfigList()));
         String[] cloudMachineInfo = enableMachineAddress.split(":");
         mission.setCloudMachineIp(cloudMachineInfo[0]);
         mission.setCloudMachinePort(cloudMachineInfo[1]);

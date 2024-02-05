@@ -10,7 +10,8 @@ import java.util.List;
  * @Date:2024/2/1 14:24
  */
 public interface MissionOutputMapper {
+    List<MissionOutput> findAll();
     List<MissionOutput> findByMissionId(String missionId);
     int insert(MissionOutput missionOutput);
-    int update(String imageUrl,Integer status, String failReason);
+    int update(MissionOutput missionOutput);
 }

@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ToolConfigDTO {
-    private String classId;
-    private String classType;
+    private String paramId;
     private String paramName;
     private String paramType;
     private String paramValue;

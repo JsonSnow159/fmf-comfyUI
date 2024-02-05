@@ -27,6 +27,14 @@
         where mission_id = #{missionId} and is_deleted = 0
     </select>
 
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        *
+        from
+        <include refid="table"/>
+        where status = 0 and is_deleted = 0
+    </select>
+
     <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.MissionOutput">
         insert into
         <include refid="table"/>
@@ -35,7 +43,7 @@
         (#{missionId}, #{imageData}, #{status})
     </insert>
 
-    <update id="update">
+    <update id="update" parameterType="com.fmf.fmf.comfyUI.dal.entity.MissionOutput">
         update
         <include refid="table" />
         set updated_at = now()

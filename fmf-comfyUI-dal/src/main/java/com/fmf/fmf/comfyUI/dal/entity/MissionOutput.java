@@ -24,7 +24,7 @@ public class MissionOutput extends BaseEntity{
     @ApiModelProperty(value = "图片url")
     private String imageUrl;
     @ApiModelProperty(value = "图片上传状态 0 待上传,1 成功,2 失败")
-    private String status;
+    private Integer status;
     @ApiModelProperty(value = "失败原因")
     private String failReason;
 }

@@ -13,9 +13,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GeneratePhotoRequestDTO {
+public class ToolRequestDTO {
     private String uid;
-    private String toolType;
+    private String toolCode;
     private String version;
     private List<ToolConfigDTO> toolConfigList;
 }

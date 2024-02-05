@@ -12,15 +12,15 @@ import org.springframework.stereotype.Component;
 public class AppInitializer implements CommandLineRunner {
 
     @Autowired
-    private InitService initService;
+    private WebSocketService webSocketService;
 
-    public AppInitializer(InitService initService) {
-        this.initService = initService;
+    public AppInitializer(WebSocketService webSocketService) {
+        this.webSocketService = webSocketService;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        initService.init();
+        webSocketService.init();
     }
 }
 

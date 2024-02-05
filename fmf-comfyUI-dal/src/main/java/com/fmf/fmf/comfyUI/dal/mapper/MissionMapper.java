@@ -11,6 +11,7 @@ import java.util.List;
 public interface MissionMapper {
     List<Mission> findByUser(String uid);
     Mission findByMissionId(String missionId);
+    Mission findByPromptId(String promptId);
     int insert(Mission mission);
     int update(Mission mission);
 }

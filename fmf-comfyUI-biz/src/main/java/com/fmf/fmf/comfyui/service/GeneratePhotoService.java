@@ -1,11 +1,11 @@
 package com.fmf.fmf.comfyui.service;
 
-import com.fmf.fmf.comfyui.dto.GeneratePhotoRequestDTO;
+import com.fmf.fmf.comfyui.dto.ToolRequestDTO;
 
 /**
  * @Author:吴金才
  * @Date:2024/2/1 15:44
  */
 public interface GeneratePhotoService {
-    void generatePhoto(GeneratePhotoRequestDTO generatePhotoRequest);
+    void generatePhoto(ToolRequestDTO generatePhotoRequest);
 }

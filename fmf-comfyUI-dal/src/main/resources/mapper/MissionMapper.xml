@@ -39,6 +39,14 @@
         where mission_id = #{missionId} and is_deleted = 0
     </select>
 
+    <select id="findByPromptId" resultMap="BaseResultMap">
+        select
+        *
+        from
+        <include refid="table"/>
+        where prompt_id = #{promptId} and is_deleted = 0
+    </select>
+
     <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.Mission" useGeneratedKeys="true" keyProperty="id">
         insert into
         <include refid="table"/>
