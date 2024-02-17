@@ -1,4 +1,4 @@
-package com.fmf.fmf.comfyui.exception;
+package com.fmf.fmf.comfyui.enums;
 
 import lombok.Getter;
 

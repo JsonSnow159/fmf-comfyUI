@@ -2,6 +2,7 @@ package com.fmf.fmf.comfyUI.dal.mapper;
 
 import com.fmf.fmf.comfyUI.dal.entity.MissionOutput;
 import com.fmf.fmf.comfyUI.dal.entity.Tool;
+import com.fmf.fmf.comfyUI.dal.entity.ToolInfo;
 
 import java.util.List;
 
@@ -11,7 +12,12 @@ import java.util.List;
  */
 
 public interface ToolMapper {
-    List<Tool> findAll();
-    int insert(MissionOutput missionOutput);
-    int update(String imageUrl,Integer status, String failReason);
+    Tool findByToolCode(String toolCode, Integer version);
+    List<ToolInfo> findAll();
+    List<Tool> findEnableTool();
+    List<Tool> findAll1();
+    ToolInfo findDetail(String toolCode, Integer version);
+    int insert(Tool tool);
+    int update(Tool tool);
+    int delete(String toolCode, Integer version);
 }

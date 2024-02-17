@@ -8,7 +8,7 @@
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
         <result column="is_deleted" property="isDeleted"/>
-        <result column="tool_type" property="toolType"/>
+        <result column="tool_code" property="toolCode"/>
         <result column="version" property="version"/>
         <result column="template_content" property="templateContent"/>
     </resultMap>
@@ -21,22 +21,22 @@
         select *
         from
         <include refid="table"/>
-        where tool_type = #{toolType} and version = #{version} and is_deleted = 0
+        where tool_code = #{toolCode} and version = #{version} and is_deleted = 0
     </select>
 
     <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.ToolTemplate">
         insert into
         <include refid="table"/>
-        (tool_type,version,template_content)
+        (tool_code,version,template_content)
         values
-        (#{toolType}, #{version}, #{templateContent})
+        (#{toolCode}, #{version}, #{templateContent})
     </insert>
 
     <update id="update" parameterType="com.fmf.fmf.comfyUI.dal.entity.ToolTemplate">
         update
         <include refid="table" />
         set template_content = #{templateContent}
-        where tool_type = #{toolType} and version = #{version}
+        where tool_code = #{toolCode} and version = #{version}
     </update>
 
 </mapper>

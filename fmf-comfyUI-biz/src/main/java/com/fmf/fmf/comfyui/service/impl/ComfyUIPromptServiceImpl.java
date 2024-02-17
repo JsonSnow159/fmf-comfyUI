@@ -5,7 +5,6 @@ import com.fmf.fmf.comfyui.dto.HttpCallResponse;
 import com.fmf.fmf.comfyui.dto.QueuePromptResponse;
 import com.fmf.fmf.comfyui.enums.ComfyUIAPIEnum;
 import com.fmf.fmf.comfyui.service.AbstractComfyUIService;
-import com.fmf.fmf.comfyui.service.ComfyUIAPIService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

@@ -8,42 +8,53 @@
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
         <result column="is_deleted" property="isDeleted"/>
-        <result column="tool_type" property="toolType"/>
+        <result column="tool_code" property="toolCode"/>
         <result column="version" property="version"/>
-        <result column="class_id" property="classId"/>
-        <result column="class_type" property="classType"/>
+        <result column="param_id" property="paramId"/>
         <result column="param_name" property="paramName"/>
         <result column="param_type" property="paramType"/>
     </resultMap>
 
     <sql id="table">
-        tool
+        tool_config
     </sql>
 
-    <select id="findByTool" resultMap="BaseResultMap">
+    <select id="findParam" resultMap="BaseResultMap">
         select *
         from
         <include refid="table"/>
-        where tool_type = #{toolType} and version = #{version} and is_deleted = 0
+        where tool_code = #{toolCode} and version = #{version} and param_id = #{paramId} and is_deleted = 0
     </select>
 
-    <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.Tool">
+    <select id="findToolConfig" resultMap="BaseResultMap">
+        select *
+        from
+        <include refid="table"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select *
+        from
+        <include refid="table"/>
+        where tool_code = #{toolCode} and version = #{version} and is_deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.ToolConfig">
         insert into
         <include refid="table"/>
-        (tool_type,version,class_id,class_type,param_name,param_type)
+        (tool_code,version,param_id,param_name,param_type)
         values
-        (#{toolType}, #{version}, #{classId}, #{classType},#{paramName},#{paramType})
+        (#{toolCode}, #{version}, #{paramId}, #{paramName},#{paramType})
     </insert>
 
-    <update id="update" parameterType="com.fmf.fmf.comfyUI.dal.entity.Tool">
+    <update id="update" parameterType="com.fmf.fmf.comfyUI.dal.entity.ToolConfig">
         update
         <include refid="table" />
         set updated_at = now()
-        <if test="classId != null">
-            , class_id = #{classId}
-        </if>
-        <if test="classType != null">
-            , class_type = #{classType}
+        <if test="paramId != null">
+            , param_id = #{paramId}
         </if>
         <if test="paramName != null">
             , param_name = #{paramName}
@@ -51,7 +62,12 @@
         <if test="paramType != null">
             , param_type = #{paramType}
         </if>
-        where tool_type = #{toolType} and version = #{version}
+        where id = #{id}
+    </update>
+
+    <update id="delete">
+        update <include refid="table" /> set is_deleted = 1
+        where id = #{id}
     </update>
 
 </mapper>

@@ -6,13 +6,15 @@ import com.fmf.fmf.comfyUI.dal.entity.Mission;
 import com.fmf.fmf.comfyUI.dal.entity.ToolTemplate;
 import com.fmf.fmf.comfyUI.dal.mapper.MissionMapper;
 import com.fmf.fmf.comfyUI.dal.mapper.ToolTemplateMapper;
+import com.fmf.fmf.comfyui.common.CommonConstant;
 import com.fmf.fmf.comfyui.common.ICacheService;
 import com.fmf.fmf.comfyui.dto.QueuePromptResponse;
 import com.fmf.fmf.comfyui.dto.ToolConfigDTO;
 import com.fmf.fmf.comfyui.dto.ToolRequestDTO;
+import com.fmf.fmf.comfyui.enums.CloudMachineStatusEnum;
+import com.fmf.fmf.comfyui.enums.MissionStatusEnum;
 import com.fmf.fmf.comfyui.enums.ToolEnum;
 import com.fmf.fmf.comfyui.exception.BizException;
-import com.fmf.fmf.comfyui.exception.CloudMachineStatusEnum;
 import com.fmf.fmf.comfyui.exception.ErrorCodeEnum;
 import com.fmf.fmf.comfyui.service.impl.ComfyUIPromptServiceImpl;
 import com.fmf.fmf.comfyui.strategy.ToolStrategy;
@@ -21,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -39,13 +40,11 @@ public class TextGenerateImage implements ToolStrategy {
     private ToolTemplateMapper toolTemplateMapper;
     @Resource
     private ICacheService cacheService;
-    private static final String CLOUD_MACHINE = "cloud_machine";
-    private static final String MACHINE_STATUS = "machine_status";
-    private static final String RUNNING_MISSION_KEY = "ip_port_queue_running_%s";
     @Resource
     private ComfyUIPromptServiceImpl comfyUIPromptService;
     @Resource
     private MissionMapper missionMapper;
+
 
     @Override
     public String getToolCode() {
@@ -54,9 +53,9 @@ public class TextGenerateImage implements ToolStrategy {
 
     @Override
     public void handler(ToolRequestDTO toolRequest) {
-        String toolType = toolRequest.getToolCode();
+        String toolCode = toolRequest.getToolCode();
         String version = toolRequest.getVersion();
-        ToolTemplate toolTemplate = toolTemplateMapper.findByTool(toolType, version);
+        ToolTemplate toolTemplate = toolTemplateMapper.findByTool(toolCode, version);
         if (Objects.isNull(toolTemplate)) {
             log.error("工具未配置模版，暂不可用");
             throw new BizException(ErrorCodeEnum.TOOL_TEMPLATE_ERROR);
@@ -66,28 +65,32 @@ public class TextGenerateImage implements ToolStrategy {
 
         String missionId = UUID.randomUUID().toString();
         missionId = missionId.replace("-", "");
-        templateContent = templateContent.replace("%client_id%", missionId);
-
+        templateContent = templateContent.replace("##client_id##", missionId);
         Long seed = 0L;
         for (ToolConfigDTO toolConfig : toolConfigList) {
-            if (Objects.equals(toolConfig.getParamId(), "9999")) {
-                templateContent = templateContent.replace("9999", toolConfig.getParamValue());
+            String paramId = toolConfig.getParamId();
+            paramId = "##" + paramId + "##";
+            if (Objects.equals(toolConfig.getParamId(), "##seed##")) {
+                templateContent = templateContent.replace(paramId, toolConfig.getParamValue());
                 seed = Long.valueOf(toolConfig.getParamValue());
-            } else {
-                templateContent = templateContent.replace(toolConfig.getParamId(), toolConfig.getParamValue());
+            }else{
+                templateContent = templateContent.replace(paramId, toolConfig.getParamValue());
             }
         }
         if (seed == 0L) {
             long currentTimeMillis = System.currentTimeMillis();
             int randomNo = SeedUtil.generateRandom4DigitNumber();
             seed = Long.parseLong(currentTimeMillis + "" + randomNo);
-            templateContent = templateContent.replace("9999", seed.toString());
+            templateContent = templateContent.replace("##seed##", seed.toString());
         }
-
-        Set<ZSetOperations.TypedTuple<String>> cloudMachineSet = cacheService.zSort(CLOUD_MACHINE);
-        Set<ZSetOperations.TypedTuple<String>> machineStatusSet = cacheService.zSort(MACHINE_STATUS);
+        if(templateContent.contains("#")){
+            log.error("模版参数未全部填写");
+            throw new BizException(ErrorCodeEnum.PARAM_ERROR);
+        }
+        Set<ZSetOperations.TypedTuple<String>> cloudMachineSet = cacheService.zSort(CommonConstant.CLOUD_MACHINE);
+        Set<ZSetOperations.TypedTuple<String>> machineStatusSet = cacheService.zSort(CommonConstant.MACHINE_STATUS);
         String enableMachineAddress = null;
-        double score = 0D;
+        Double score = 0D;
         try {
             for (ZSetOperations.TypedTuple<String> cloudMachine : cloudMachineSet) {
                 String machineAddress = cloudMachine.getValue();
@@ -112,7 +115,6 @@ public class TextGenerateImage implements ToolStrategy {
         } catch (Exception e) {
             log.error("获取可用云算力服务器时异常", e);
         }
-
         if (StringUtils.isBlank(enableMachineAddress)) {
             log.error("未找到可用机器");
             throw new BizException(ErrorCodeEnum.CLOUD_MACHINE_ERROR);
@@ -120,22 +122,21 @@ public class TextGenerateImage implements ToolStrategy {
         Mission mission = new Mission();
         mission.setMissionId(missionId);
         mission.setUid(toolRequest.getUid());
-        mission.setPromptRequest(JSON.toJSONString(toolRequest.getToolConfigList()));
-        String[] cloudMachineInfo = enableMachineAddress.split(":");
+//        mission.setPromptRequest(JSON.toJSONString(toolRequest.getToolConfigList()));
+        String[] cloudMachineInfo = enableMachineAddress.split(CommonConstant.SPLIT_REGEX);
         mission.setCloudMachineIp(cloudMachineInfo[0]);
         mission.setCloudMachinePort(cloudMachineInfo[1]);
-        mission.setStatus(0);
+        mission.setStatus(MissionStatusEnum.INIT.getCode());
         int insert = missionMapper.insert(mission);
         if (insert == 0) {
             throw new BizException(ErrorCodeEnum.INSERT_ERROR);
         }
         QueuePromptResponse promptResponse = comfyUIPromptService.prompt(enableMachineAddress, templateContent);
-
         String promptId = promptResponse.getPromptId();
         mission.setPromptId(promptId);
-        mission.setStatus(1);
+        mission.setStatus(MissionStatusEnum.RUNNING.getCode());
         missionMapper.update(mission);
-        cacheService.zadd(String.format(RUNNING_MISSION_KEY, enableMachineAddress), promptId, System.currentTimeMillis());
-        cacheService.zadd(CLOUD_MACHINE, enableMachineAddress, score + 1);
+        cacheService.zadd(String.format(CommonConstant.RUNNING_MISSION_KEY, enableMachineAddress), promptId, System.currentTimeMillis());
+        cacheService.zadd(CommonConstant.CLOUD_MACHINE, enableMachineAddress, score + 1);
     }
 }

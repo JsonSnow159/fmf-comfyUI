@@ -11,11 +11,9 @@
         <result column="mission_id" property="missionId"/>
         <result column="uid" property="uid"/>
         <result column="prompt_id" property="promptId"/>
-        <result column="prompt_request" property="promptRequest"/>
         <result column="cloud_machine_ip" property="cloudMachineIp"/>
         <result column="cloud_machine_port" property="cloudMachinePort"/>
         <result column="status" property="status"/>
-        <result column="images" property="images"/>
         <result column="error_data" property="errorData"/>
     </resultMap>
 
@@ -50,9 +48,9 @@
     <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.Mission" useGeneratedKeys="true" keyProperty="id">
         insert into
         <include refid="table"/>
-        (mission_id,uid,prompt_request,cloud_machine_ip,cloud_machine_port,status)
+        (mission_id,uid,cloud_machine_ip,cloud_machine_port,status)
         values
-        (#{missionId}, #{uid}, #{promptRequest},#{cloudMachineIp},#{cloudMachinePort},#{status})
+        (#{missionId}, #{uid}, #{cloudMachineIp},#{cloudMachinePort},#{status})
     </insert>
 
     <update id="update" parameterType="com.fmf.fmf.comfyUI.dal.entity.Mission">
@@ -64,9 +62,6 @@
         </if>
         <if test="status != null">
             , status = #{status}
-        </if>
-        <if test="images != null">
-            , images = #{images}
         </if>
         <if test="errorData != null">
             , error_data = #{errorData}

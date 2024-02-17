@@ -9,6 +9,8 @@ public enum ErrorCodeEnum implements ICodeEnum{
 	HTTP_CALL_5XX_ERROR(1000009, "Http请求5xx远端服务端异常"),
 	HTTP_CALL_UNKNOWN_ERROR(1000007, "Http请求未知错误"),
 	INSERT_ERROR(20000001, "数据库插入错误"),
+	PARAM_ERROR(10000003, "参数错误"),
+	IMAGE_UPLOAD_ERROR(10000004, "图片上传失败"),
 	;
 
 	private Integer code;

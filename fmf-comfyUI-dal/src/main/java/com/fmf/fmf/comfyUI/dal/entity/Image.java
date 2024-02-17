@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @ApiModel(value = "图片对象", description = "用户上传的图片信息")
 public class Image extends BaseEntity{
     @ApiModelProperty(value = "图片上传路径")
-    private Integer imageUrl;
+    private String imageUrl;
     @ApiModelProperty(value = "用户id")
     private String uid;
 }

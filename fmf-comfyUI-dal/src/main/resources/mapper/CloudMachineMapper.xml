@@ -37,6 +37,16 @@
         where is_deleted = 0
     </select>
 
+    <select id="findDetail" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="table"/>
+        where id = #{id}
+    </select>
+
+
+
     <insert id="insert">
         insert into
         <include refid="table"/>
@@ -46,7 +56,7 @@
         </if>
         )
         values
-        (#{area}, #{ip}, #{port},
+        (#{area}, #{ip}, #{port}
         <if test="status != null">
             ,#{status}
         </if>)

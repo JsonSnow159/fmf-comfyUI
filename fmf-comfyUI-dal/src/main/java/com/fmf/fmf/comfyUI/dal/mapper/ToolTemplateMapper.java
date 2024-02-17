@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
  * @Date:2024/2/1 15:12
  */
 public interface ToolTemplateMapper {
-    ToolTemplate findByTool(@Param("toolType") String toolType, @Param("version") String version);
-    int insert(ToolTemplateMapper toolTemplateMapper);
+    ToolTemplate findByTool(@Param("toolCode") String toolCode, @Param("version") String version);
+    int insert(ToolTemplate toolTemplate);
     int update(ToolTemplateMapper toolTemplateMapper);
 }

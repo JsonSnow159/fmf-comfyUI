@@ -31,4 +31,8 @@ public class ComfyUIAPIEnum {
      * 预览图片
      */
     public static API VIEW = new API(GET, "/view", "");
+    /**
+     * 上传input图片
+     */
+    public static API UPLOAD_IMAGE = new API(POST, "/upload/image", "");
 }

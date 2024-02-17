@@ -5,40 +5,124 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.fmf.fmf.comfyUI.dal.entity.Tool">
         <result column="id" property="id"/>
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="tool_code" property="toolCode" />
+        <result column="tool_name" property="toolName" />
+        <result column="version" property="version" />
+        <result column="sort" property="sort" />
+        <result column="is_enable" property="isEnable" />
+        <result column="logo" property="logo" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="allInfoMap" type="com.fmf.fmf.comfyUI.dal.entity.ToolInfo">
+        <result column="id" property="id"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
         <result column="is_deleted" property="isDeleted"/>
-        <result column="tool_type" property="toolType"/>
+        <result column="tool_code" property="toolCode"/>
         <result column="tool_name" property="toolName"/>
         <result column="version" property="version"/>
+        <result column="sort" property="sort"/>
+        <result column="is_enable" property="isEnable"/>
+        <result column="logo" property="logo"/>
+        <result column="description" property="description"/>
+        <result column="template_content" property="templateContent"/>
     </resultMap>
 
     <sql id="table">
         tool
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+
+
+    <select id="findByToolCode" resultMap="BaseResultMap">
         select
         *
         from
         <include refid="table"/>
+        where tool_code = #{toolCode} and version = #{version} and is_deleted = 0
+    </select>
+
+    <select id="findAll1" resultMap="BaseResultMap">
+        select *
+        from tool
         where is_deleted = 0
+        order by sort asc
+    </select>
+
+    <select id="findDetail" resultMap="allInfoMap">
+        select t1.id,t1.tool_code,t1.tool_name,t1.version,t1.sort,t1.is_enable,t1.logo,t1.description,t2.template_content,
+               t1.created_at,t1.updated_at
+        from tool t1
+                 left join tool_template t2 on t1.tool_code = t2.tool_code and t1.version = t2.version
+        where t1.tool_code = #{toolCode} and t1.version = #{version} and t1.is_deleted = 0
+        order by t1.sort asc
+    </select>
+
+
+
+
+    <select id="findAll" resultMap="allInfoMap">
+        select t1.id,t1.tool_code,t1.tool_name,t1.version,t1.sort,t1.is_enable,t1.logo,t1.description,t2.template_content,
+        t1.created_at,t1.updated_at
+        from tool t1
+        left join tool_template t2 on t1.tool_code = t2.tool_code and t1.version = t2.version
+        where t1.is_deleted = 0
+        order by t1.sort asc
+    </select>
+
+    <select id="findEnableTool" resultMap="BaseResultMap">
+        select
+        *
+        from
+        <include refid="table"/>
+        where is_enable = 1 and is_deleted = 0
+        order by sort asc
     </select>
 
     <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.Tool">
         insert into
         <include refid="table"/>
-        (tool_type,tool_name,version)
+        (tool_code,tool_name,version
+        <if test="isEnable != null">
+            , is_enable
+        </if>
+        <if test="logo != null">
+            , logo
+        </if>
+        <if test="description != null">
+            , description
+        </if>
+        <if test="sort != null">
+            , sort
+        </if>
+            )
         values
-        (#{toolType}, #{toolName}, #{version})
+        (#{toolCode}, #{toolName}, #{version}
+        <if test="isEnable != null">
+            , #{isEnable}
+        </if>
+        <if test="logo != null">
+            , #{logo}
+        </if>
+        <if test="description != null">
+            , #{description}
+        </if>
+        <if test="sort != null">
+            , #{sort}
+        </if>)
     </insert>
 
     <update id="update" parameterType="com.fmf.fmf.comfyUI.dal.entity.Tool">
         update
         <include refid="table" />
         set updated_at = now()
-        <if test="toolType != null">
-            , tool_type = #{toolType}
+        <if test="toolCode != null">
+            , tool_code = #{toolCode}
         </if>
         <if test="toolName != null">
             , tool_name = #{toolName}
@@ -46,7 +130,25 @@
         <if test="version != null">
             , version = #{version}
         </if>
+        <if test="isEnable != null">
+            , is_enable = #{isEnable}
+        </if>
+        <if test="logo != null">
+            , logo = #{logo}
+        </if>
+        <if test="description != null">
+            , description = #{description}
+        </if>
+        <if test="sort != null">
+            , sort = #{sort}
+        </if>
         where id = #{id}
+    </update>
+
+    <update id="delete">
+        update <include refid="table"/>
+        set is_deleted = 1
+        where tool_code = #{toolCode} and version = #{version}
     </update>
 
 </mapper>

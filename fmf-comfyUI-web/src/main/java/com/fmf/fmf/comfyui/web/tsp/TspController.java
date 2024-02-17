@@ -21,7 +21,7 @@ public class TspController {
     @RequestMapping("/uploadImg")
     //用户填入参数，寻找模版
     public R generatePhoto(){
-        uploadImgService.uploadImg();
+        uploadImgService.uploadOutputImg();
         return R.ok();
     }
 }

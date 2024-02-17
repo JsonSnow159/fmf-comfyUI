@@ -18,13 +18,11 @@ import lombok.experimental.Accessors;
 @ApiModel(value = "工具配置对象", description = "工具配置维护")
 public class ToolConfig extends BaseEntity{
     @ApiModelProperty(value = "工具类型")
-    private Integer toolType;
+    private String toolCode;
     @ApiModelProperty(value = "版本")
-    private String version;
-    @ApiModelProperty(value = "节点id")
-    private String classId;
-    @ApiModelProperty(value = "节点类型")
-    private String classType;
+    private Integer version;
+    @ApiModelProperty(value = "参数id")
+    private String paramId;
     @ApiModelProperty(value = "参数名称")
     private String paramName;
     @ApiModelProperty(value = "参数类型")

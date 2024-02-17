@@ -12,7 +12,8 @@ import java.util.List;
 public interface CloudMachineMapper {
 
     List<CloudMachine> findAll();
-    int insert();
-    int update();
-    int delete();
+    CloudMachine findDetail(Long id);
+    int insert(CloudMachine cloudMachine);
+    int update(CloudMachine cloudMachine);
+    int delete(Long id);
 }

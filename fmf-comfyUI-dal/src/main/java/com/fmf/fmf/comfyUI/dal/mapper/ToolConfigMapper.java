@@ -9,9 +9,15 @@ import java.util.List;
  * @Date:2024/2/1 15:01
  */
 public interface ToolConfigMapper {
-    List<ToolConfig> findByTool(String toolType, String version);
+    List<ToolConfig> findAll(String toolCode, Integer version);
+    ToolConfig findParam(String toolCode, Integer version, String paramId);
+    ToolConfig findToolConfig(Long id);
 
     int insert(ToolConfig toolConfig);
 
     int update(ToolConfig toolConfig);
+
+    int delete(Long id);
+
+
 }

@@ -35,7 +35,6 @@ public class ComfyUIViewServiceImpl extends AbstractComfyUIService<String, Strin
                 String encodedValue = URLEncoder.encode(value.toString(), "UTF-8");
                 urlBuilder.append(encodedKey).append("=").append(encodedValue).append("&");
             } catch (UnsupportedEncodingException e) {
-                // Handle the exception or throw it if necessary
                 e.printStackTrace();
             }
         }
