@@ -58,15 +58,11 @@ public class ToolConfigServiceImpl implements ToolConfigService {
 
     @Override
     public PR findAll(ToolConfigQueryInDTO inDTO) {
-        List<ToolConfig> toolConfigList = toolConfigMapper.findAll(inDTO.getToolCode(), inDTO.getVersion());
-//        Page<ToolConfig> page = PageHelper.startPage(inDTO.getPage(), inDTO.getSize())
-//                .doSelectPage(() -> toolMapper.findAll(inDTO.getToolCode(), inDTO.getVersion()));
-//        List<ToolConfig> result = page.getResult();
-        long total = toolConfigList.size();
+        long total = toolConfigMapper.count(inDTO.getToolCode(), inDTO.getVersion());
+        List<ToolConfig> toolConfigList = toolConfigMapper.findAll(inDTO.getToolCode(), inDTO.getVersion(),inDTO.getOffset(),inDTO.getSize());
         if (CollectionUtils.isEmpty(toolConfigList)) {
             return PR.ofEmpty(total);
         }
-//        return null;
         List<ToolConfigOutDTO> toolConfigOutList = convertToolConfigList2ToolConfigQueryOutDTOList(toolConfigList);
         return PR.ok(toolConfigOutList, total);
     }

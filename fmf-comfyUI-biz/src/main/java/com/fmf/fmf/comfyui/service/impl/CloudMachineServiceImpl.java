@@ -50,15 +50,11 @@ public class CloudMachineServiceImpl implements CloudMachineService {
 
     @Override
     public PR findAll(PageSearchDTO inDTO) {
-        List<CloudMachine> cloudMachineList = cloudMachineMapper.findAll();
-//        Page<Tool> page = PageHelper.startPage(inDTO.getPage(), inDTO.getSize())
-//                .doSelectPage(() -> toolMapper.findAll1());
-//        List<Tool> result = page.getResult();
-        long total = cloudMachineList.size();
+        long total = cloudMachineMapper.count();
+        List<CloudMachine> cloudMachineList = cloudMachineMapper.findByPage(inDTO.getOffset(),inDTO.getSize());
         if (CollectionUtils.isEmpty(cloudMachineList)) {
             return PR.ofEmpty(total);
         }
-//        return null;
         List<CloudMachineOutDTO> dtOs = convertCloudMachine2CloudMachineOutDTOList(cloudMachineList);
         return PR.ok(dtOs, total);
     }

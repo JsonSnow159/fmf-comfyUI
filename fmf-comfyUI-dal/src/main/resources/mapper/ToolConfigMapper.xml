@@ -39,6 +39,14 @@
         from
         <include refid="table"/>
         where tool_code = #{toolCode} and version = #{version} and is_deleted = 0
+        limit #{offset},#{pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*)
+        from
+        <include refid="table"/>
+        where tool_code = #{toolCode} and version = #{version} and is_deleted = 0
     </select>
 
     <insert id="insert" parameterType="com.fmf.fmf.comfyUI.dal.entity.ToolConfig">

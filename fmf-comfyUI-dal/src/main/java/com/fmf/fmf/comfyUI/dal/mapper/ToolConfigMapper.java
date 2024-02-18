@@ -9,7 +9,8 @@ import java.util.List;
  * @Date:2024/2/1 15:01
  */
 public interface ToolConfigMapper {
-    List<ToolConfig> findAll(String toolCode, Integer version);
+    List<ToolConfig> findAll(String toolCode, Integer version, Integer offset, Integer pageSize);
+    int count(String toolCode, Integer version);
     ToolConfig findParam(String toolCode, Integer version, String paramId);
     ToolConfig findToolConfig(Long id);
 

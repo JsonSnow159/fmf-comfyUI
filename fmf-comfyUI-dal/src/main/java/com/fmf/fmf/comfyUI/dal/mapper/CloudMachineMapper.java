@@ -1,6 +1,7 @@
 package com.fmf.fmf.comfyUI.dal.mapper;
 
 import com.fmf.fmf.comfyUI.dal.entity.CloudMachine;
+import io.swagger.models.auth.In;
 
 import java.util.List;
 
@@ -10,8 +11,9 @@ import java.util.List;
  */
 
 public interface CloudMachineMapper {
-
     List<CloudMachine> findAll();
+    List<CloudMachine> findByPage(Integer offset, Integer pageSize);
+    int count();
     CloudMachine findDetail(Long id);
     int insert(CloudMachine cloudMachine);
     int update(CloudMachine cloudMachine);

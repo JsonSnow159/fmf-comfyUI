@@ -12,6 +12,8 @@ import com.fmf.fmf.comfyui.dto.tool.ToolAddInDTO;
 import com.fmf.fmf.comfyui.dto.tool.ToolQueryInDTO;
 import com.fmf.fmf.comfyui.dto.tool.ToolQueryOutDTO;
 import com.fmf.fmf.comfyui.service.ToolService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,15 +84,11 @@ public class ToolServiceImpl implements ToolService {
 
     @Override
     public PR findAll(PageSearchDTO inDTO) {
-        List<ToolInfo> result = toolMapper.findAll();
-//        Page<Tool> page = PageHelper.startPage(inDTO.getPage(), inDTO.getSize())
-//                .doSelectPage(() -> toolMapper.findAll1());
-//        List<Tool> result = page.getResult();
-        long total = result.size();
+        long total = toolMapper.count();
+        List<ToolInfo> result = toolMapper.findAll(inDTO.getOffset(), inDTO.getSize());
         if (CollectionUtils.isEmpty(result)) {
             return PR.ofEmpty(total);
         }
-//        return null;
         List<ToolQueryOutDTO> dtOs = convertToolInfo2ToolQueryOutDTOList(result);
         return PR.ok(dtOs, total);
     }

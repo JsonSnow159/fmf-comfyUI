@@ -63,9 +63,6 @@
         order by t1.sort asc
     </select>
 
-
-
-
     <select id="findAll" resultMap="allInfoMap">
         select t1.id,t1.tool_code,t1.tool_name,t1.version,t1.sort,t1.is_enable,t1.logo,t1.description,t2.template_content,
         t1.created_at,t1.updated_at
@@ -73,6 +70,14 @@
         left join tool_template t2 on t1.tool_code = t2.tool_code and t1.version = t2.version
         where t1.is_deleted = 0
         order by t1.sort asc
+        limit #{offset},#{pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*)
+        from tool t1
+                 left join tool_template t2 on t1.tool_code = t2.tool_code and t1.version = t2.version
+        where t1.is_deleted = 0
     </select>
 
     <select id="findEnableTool" resultMap="BaseResultMap">

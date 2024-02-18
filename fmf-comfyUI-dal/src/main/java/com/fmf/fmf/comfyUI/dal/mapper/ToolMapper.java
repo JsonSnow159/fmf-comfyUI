@@ -13,7 +13,8 @@ import java.util.List;
 
 public interface ToolMapper {
     Tool findByToolCode(String toolCode, Integer version);
-    List<ToolInfo> findAll();
+    List<ToolInfo> findAll(Integer offset, Integer pageSize);
+    int count();
     List<Tool> findEnableTool();
     List<Tool> findAll1();
     ToolInfo findDetail(String toolCode, Integer version);

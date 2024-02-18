@@ -8,6 +8,16 @@
         <outputRelativeToContentRoot value="true" />
         <module name="fmf-comfyUI-dal" />
         <module name="fmf-comfyUI-web" />
+      </profile>
+      <profile name="Annotation profile for fmf-comfyUI" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.4.1.Final/mapstruct-processor-1.4.1.Final.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.4.1.Final/mapstruct-1.4.1.Final.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.2/lombok-1.18.2.jar" />
+        </processorPath>
         <module name="fmf-comfyUI-biz" />
       </profile>
     </annotationProcessing>
